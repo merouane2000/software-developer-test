@@ -20,7 +20,6 @@ class Purchase(BaseModel):
 @app.post("/purchase/", response_model=Purchase)
 async def add_purchase(purchase: Purchase):
     purchases.append(purchase)
-    print("Current Purchases:", purchases)
     return purchase
 
 @app.post("/purchase/bulk/")
@@ -41,7 +40,6 @@ async def add_bulk_purchases(file: UploadFile = File(...)):
             )
             purchases.append(purchase)
             new_purchases.append(purchase)
-            print("Bulk:", purchases)
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Error processing row: {row} - {e}")
     return JSONResponse(content={"added": len(new_purchases)})
@@ -49,7 +47,6 @@ async def add_bulk_purchases(file: UploadFile = File(...)):
 
 @app.get("/purchase/purchases/", response_model=List[Purchase])
 def get_purchases(country: Optional[str] = None, start_date: Optional[date] = None):
-    print(f"Received Parameters: country={country}, start_date={start_date}")
     filtered = purchases
     if country:
         filtered = [p for p in filtered if p.country.lower() == country.lower()]
